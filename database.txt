@@ -1,0 +1,62 @@
+CREATE TABLE public.medico
+(
+  nome character varying(64) NOT NULL,
+  cognome character varying(64) NOT NULL,
+  specializzazione character varying(64),
+  CONSTRAINT pk_medico PRIMARY KEY (nome, cognome)
+)
+
+CREATE TABLE public.paziente
+(
+  id character varying(64) NOT NULL,
+  nome character varying(64) NOT NULL,
+  cognome character varying(64) NOT NULL,
+  datanascita character varying(64) NOT NULL,
+  grupposang character varying(64) NOT NULL,
+  email character varying(64),
+  CONSTRAINT pk_paziente PRIMARY KEY (id)
+)
+
+CREATE TABLE public.utente
+(
+  id character varying(64) REFERENCES paziente(id) NOT NULL,
+  nomeUtente character varying(64) NOT NULL,
+  pass character varying(64) NOT NULL,
+  ruolo character varying(64) NOT NULL,
+  CONSTRAINT pk_utente PRIMARY KEY (nomeUtente, pass)
+)
+
+CREATE TABLE public.tipoesame
+(
+  codice character varying(64) NOT NULL,
+  nome character varying(64) NOT NULL,
+  descrizione character varying(64) NOT NULL,
+  costo integer NOT NULL,
+  prerequisiti character varying(64),
+  CONSTRAINT pk_tipoesame PRIMARY KEY (codice)
+)
+
+CREATE TABLE public.esame
+(
+  codice character varying(64) NOT NULL,
+  codicetipoesame character varying(64) NOT NULL,
+  nometipoesame character varying(64),
+  idpaziente character varying(64) NOT NULL,
+  nomepaziente character varying(64),
+  dataprenotazione character varying(64) NOT NULL,
+  dataesame character varying(64),
+  nomemedico character varying(64),
+  cognomemedico character varying(64),
+  risultati character varying(64),
+  CONSTRAINT pk_esame PRIMARY KEY (codice),
+  CONSTRAINT esame_codiceesame_fkey FOREIGN KEY (codicetipoesame)
+      REFERENCES public.tipoesame (codice) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT esame_idpaziente_fkey FOREIGN KEY (idpaziente)
+      REFERENCES public.paziente (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT esame_medico_fkey FOREIGN KEY (nomemedico, cognomemedico)
+      REFERENCES public.medico (nome, cognome) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+
